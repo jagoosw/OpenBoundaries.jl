@@ -1,0 +1,18 @@
+name = "OpenBoundaries.jl"
+uuid = "b7dafd1a-c422-4ea9-bf80-1dcb8b2e152e"
+authors = ["Jago Stong-Wright <jagoosw@protonmail.com>", "John R. Taylor <johnryantaylor@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Oceananigans = "9e8cae18-63c1-5223-a75c-80ca9d6e9a09"
+
+[compat]
+CairoMakie = "0.12"
+Oceananigans = "0.90"
+
+[extras]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[target]
+test = ["CairoMakie", "Test"]
