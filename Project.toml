@@ -4,10 +4,14 @@ authors = ["Jago Stong-Wright <jagoosw@protonmail.com>", "John R. Taylor <johnry
 version = "0.1.0"
 
 [deps]
+Adapt = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
+KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
 Oceananigans = "9e8cae18-63c1-5223-a75c-80ca9d6e9a09"
 
 [compat]
+Adapt = "4"
 CairoMakie = "0.12"
+KernelAbstractions = "0.9"
 Oceananigans = "0.91.8"
 
 [extras]
