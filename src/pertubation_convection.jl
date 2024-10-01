@@ -1,28 +1,35 @@
 using Oceananigans.Grids: xspacing
+using Oceananigans.TimeSteppers: Clock
 
 """
     PretubationConvection
 
 Assumed that the condition is the mean flow.
 """
-struct PertubationConvection{FT}
+struct PertubationConvection{FT, C}
     relaxation_timescale :: FT
+              last_clock :: C
 end
 
-function PertubationConvectionOpenBoundaryCondition(val; relaxation_timescale = 10, kwargs...)
+function PertubationConvectionOpenBoundaryCondition(val, FT = Float64; relaxation_timescale = 10, kwargs...)
+    last_clock = Clock(; time = zero(FT))
 
-    classifcation = Open(PertubationConvection(relaxation_timescale))
+    classifcation = Open(PertubationConvection(relaxation_timescale, last_clock))
     
     return BoundaryCondition(classifcation, val; kwargs...)
 end
 
 const PCOBC = BoundaryCondition{<:Open{<:PertubationConvection}}
 
+@inline update_boundary_condition!(bc::PCOBC, side, field, model) = 
+    (bc.classifcation.matching_scheme.last_clock.time = model.clock.time - model.clock.last_stage_Δt)
+
 @inline function _fill_east_open_halo!(j, k, grid, u, bc::PCOBC, loc, clock, model_fields)
     i = grid.Nx + 1
 
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
+    tⁿ = bc.classifcation.matching_scheme.last_clock
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
@@ -30,7 +37,7 @@ const PCOBC = BoundaryCondition{<:Open{<:PertubationConvection}}
 
     ūⁿ⁺¹ = getbc(bc, j, k, grid, clock, model_fields)
 
-    ūⁿ   = getbc(bc, j, k, grid, Clock(; time = clock - Δt), model_fields)
+    ūⁿ   = getbc(bc, j, k, grid, tⁿ, model_fields)
 
     u′ᵢⁿ     = @inbounds u[i, j, k] - ūⁿ
     u′ᵢ₋₁ⁿ⁺¹ = @inbounds u[i - 1, j, k] - ūⁿ⁺¹
@@ -45,6 +52,7 @@ end
 @inline function _fill_west_open_halo!(j, k, grid, u, bc::PCOBC, loc, clock, model_fields)
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
+    tⁿ = bc.classifcation.matching_scheme.last_clock
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
@@ -52,7 +60,7 @@ end
 
     ūⁿ⁺¹ = getbc(bc, j, k, grid, clock, model_fields)
 
-    ūⁿ   = getbc(bc, j, k, grid, Clock(; time = clock - Δt), model_fields)
+    ūⁿ   = getbc(bc, j, k, grid, tⁿ, model_fields)
 
     u′₀ⁿ   = @inbounds u[0, j, k] - ūⁿ
     u′₁ⁿ⁺¹ = @inbounds u[1, j, k] - ūⁿ⁺¹
@@ -69,6 +77,7 @@ end
 
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
+    tⁿ = bc.classifcation.matching_scheme.last_clock
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
@@ -76,7 +85,7 @@ end
 
     v̄ⁿ⁺¹ = getbc(bc, j, k, grid, clock, model_fields)
 
-    v̄ⁿ   = getbc(bc, j, k, grid, Clock(; time = clock - Δt), model_fields)
+    v̄ⁿ   = getbc(bc, j, k, grid, tⁿ, model_fields)
 
     v′ⱼⁿ     = @inbounds v[i, j, k] - v̄ⁿ
     v′ⱼ₋₁ⁿ⁺¹ = @inbounds v[i, j - 1, k] - v̄ⁿ⁺¹
@@ -91,6 +100,7 @@ end
 @inline function _fill_south_open_halo!(i, k, grid, v, bc::PCOBC, loc, clock, model_fields)
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
+    tⁿ = bc.classifcation.matching_scheme.last_clock
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
@@ -98,7 +108,7 @@ end
 
     v̄ⁿ⁺¹ = getbc(bc, i, k, grid, clock, model_fields)
 
-    v̄ⁿ   = getbc(bc, i, k, grid, Clock(; time = clock - Δt), model_fields)
+    v̄ⁿ   = getbc(bc, i, k, grid, tⁿ, model_fields)
 
     v′₀ⁿ   = @inbounds v[i, 0, k] - v̄ⁿ
     v′₁ⁿ⁺¹ = @inbounds v[i, 1, k] - v̄ⁿ⁺¹
