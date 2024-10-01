@@ -39,7 +39,9 @@ const PCOBC = BoundaryCondition{<:Open{<:PertubationConvection}}
     u′ᵢⁿ     = @inbounds u[i, j, k] - ūⁿ
     u′ᵢ₋₁ⁿ⁺¹ = @inbounds u[i - 1, j, k] - ūⁿ⁺¹
 
-    u′ᵢⁿ⁺¹ = (u′ᵢⁿ + Δt / Δx * ūⁿ⁺¹ * u′ᵢ₋₁ⁿ⁺¹) / (1 + Δt / τ + Δt / Δx * ūⁿ⁺¹)
+    U = max(0, min(1, Δt / Δx * ūⁿ⁺¹))
+
+    u′ᵢⁿ⁺¹ = (u′ᵢⁿ + U * u′ᵢ₋₁ⁿ⁺¹) / (1 + Δt / τ + U)
 
     @inbounds u[i, j, k] = ūⁿ⁺¹ + u′ᵢⁿ⁺¹
 end
@@ -63,7 +65,9 @@ end
     u′₀ⁿ   = @inbounds u[0, j, k] - ūⁿ
     u′₁ⁿ⁺¹ = @inbounds u[1, j, k] - ūⁿ⁺¹
 
-    u′₀ⁿ⁺¹ = (u′₀ⁿ - Δt / Δx * ūⁿ⁺¹ * u′₁ⁿ⁺¹) / (1 + Δt / τ - Δt / Δx * ūⁿ⁺¹)
+    U = min(0, max(1, Δt / Δx * ūⁿ⁺¹))
+
+    u′₀ⁿ⁺¹ = (u′₀ⁿ - U * u′₁ⁿ⁺¹) / (1 + Δt / τ - U)
 
     @inbounds u[0, j, k] = ūⁿ⁺¹ + u′₀ⁿ⁺¹
 end
@@ -89,7 +93,9 @@ end
     v′ⱼⁿ     = @inbounds v[i, j, k] - v̄ⁿ
     v′ⱼ₋₁ⁿ⁺¹ = @inbounds v[i, j - 1, k] - v̄ⁿ⁺¹
 
-    v′ⱼⁿ⁺¹ = (v′ⱼⁿ + Δt / Δx * v̄ⁿ⁺¹ * v′ⱼ₋₁ⁿ⁺¹) / (1 + Δt / τ + Δt / Δx * v̄ⁿ⁺¹)
+    V = max(0, min(1, Δt / Δx * v̄ⁿ⁺¹))
+
+    v′ⱼⁿ⁺¹ = (v′ⱼⁿ + V * v′ⱼ₋₁ⁿ⁺¹) / (1 + Δt / τ + V)
 
     @inbounds v[i, j, k] = v̄ⁿ⁺¹ + v′ⱼⁿ⁺¹
 end
@@ -113,7 +119,9 @@ end
     v′₀ⁿ   = @inbounds v[i, 0, k] - v̄ⁿ
     v′₁ⁿ⁺¹ = @inbounds v[i, 1, k] - v̄ⁿ⁺¹
 
-    v′₀ⁿ⁺¹ = (v′₀ⁿ - Δt / Δx * v̄ⁿ⁺¹ * v′₁ⁿ⁺¹) / (1 + Δt / τ - Δt / Δx * v̄ⁿ⁺¹)
+    V = min(0, max(1, Δt / Δx * v̄ⁿ⁺¹))
+
+    v′₀ⁿ⁺¹ = (v′₀ⁿ - V * v′₁ⁿ⁺¹) / (1 + Δt / τ - V)
 
     @inbounds v[i, 0, k] = v̄ⁿ⁺¹ + v′₀ⁿ⁺¹
 end
