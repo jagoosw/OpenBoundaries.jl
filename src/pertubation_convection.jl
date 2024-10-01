@@ -30,11 +30,7 @@ const PCOBC = BoundaryCondition{<:Open{<:PertubationConvection}}
 
     ūⁿ⁺¹ = getbc(bc, j, k, grid, clock, model_fields)
 
-    clock.time -= Δt
-
-    ūⁿ   = getbc(bc, j, k, grid, clock, model_fields)
-
-    clock.time += Δt
+    ūⁿ   = getbc(bc, j, k, grid, Clock(; time = clock - Δt), model_fields)
 
     u′ᵢⁿ     = @inbounds u[i, j, k] - ūⁿ
     u′ᵢ₋₁ⁿ⁺¹ = @inbounds u[i - 1, j, k] - ūⁿ⁺¹
@@ -56,11 +52,7 @@ end
 
     ūⁿ⁺¹ = getbc(bc, j, k, grid, clock, model_fields)
 
-    clock.time -= Δt # this might cause problems from asyncronisity ...
-
-    ūⁿ   = getbc(bc, j, k, grid, clock, model_fields)
-
-    clock.time += Δt
+    ūⁿ   = getbc(bc, j, k, grid, Clock(; time = clock - Δt), model_fields)
 
     u′₀ⁿ   = @inbounds u[0, j, k] - ūⁿ
     u′₁ⁿ⁺¹ = @inbounds u[1, j, k] - ūⁿ⁺¹
@@ -84,11 +76,7 @@ end
 
     v̄ⁿ⁺¹ = getbc(bc, j, k, grid, clock, model_fields)
 
-    clock.time -= Δt
-
-    v̄ⁿ   = getbc(bc, j, k, grid, clock, model_fields)
-
-    clock.time += Δt
+    v̄ⁿ   = getbc(bc, j, k, grid, Clock(; time = clock - Δt), model_fields)
 
     v′ⱼⁿ     = @inbounds v[i, j, k] - v̄ⁿ
     v′ⱼ₋₁ⁿ⁺¹ = @inbounds v[i, j - 1, k] - v̄ⁿ⁺¹
@@ -110,11 +98,7 @@ end
 
     v̄ⁿ⁺¹ = getbc(bc, i, k, grid, clock, model_fields)
 
-    clock.time -= Δt
-
-    v̄ⁿ   = getbc(bc, i, k, grid, clock, model_fields)
-
-    clock.time += Δt
+    v̄ⁿ   = getbc(bc, i, k, grid, Clock(; time = clock - Δt), model_fields)
 
     v′₀ⁿ   = @inbounds v[i, 0, k] - v̄ⁿ
     v′₁ⁿ⁺¹ = @inbounds v[i, 1, k] - v̄ⁿ⁺¹
