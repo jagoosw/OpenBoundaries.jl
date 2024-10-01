@@ -22,7 +22,7 @@ end
 const PCOBC = BoundaryCondition{<:Open{<:PertubationConvection}}
 
 @inline update_boundary_condition!(bc::PCOBC, side, field, model) = 
-    (bc.classifcation.matching_scheme.last_clock.time = model.clock.time - model.clock.last_stage_Δt)
+    (bc.classification.matching_scheme.last_clock.time = model.clock.time - model.clock.last_stage_Δt)
 
 @inline function _fill_east_open_halo!(j, k, grid, u, bc::PCOBC, loc, clock, model_fields)
     i = grid.Nx + 1
