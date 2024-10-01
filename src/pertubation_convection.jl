@@ -14,9 +14,9 @@ end
 function PertubationConvectionOpenBoundaryCondition(val, FT = Float64; relaxation_timescale = 10, kwargs...)
     last_clock = Clock(; time = zero(FT))
 
-    classifcation = Open(PertubationConvection(relaxation_timescale, last_clock))
+    classification = Open(PertubationConvection(relaxation_timescale, last_clock))
     
-    return BoundaryCondition(classifcation, val; kwargs...)
+    return BoundaryCondition(classification, val; kwargs...)
 end
 
 const PCOBC = BoundaryCondition{<:Open{<:PertubationConvection}}
@@ -29,7 +29,7 @@ const PCOBC = BoundaryCondition{<:Open{<:PertubationConvection}}
 
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
-    tⁿ = bc.classifcation.matching_scheme.last_clock
+    tⁿ = bc.classification.matching_scheme.last_clock
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
@@ -52,7 +52,7 @@ end
 @inline function _fill_west_open_halo!(j, k, grid, u, bc::PCOBC, loc, clock, model_fields)
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
-    tⁿ = bc.classifcation.matching_scheme.last_clock
+    tⁿ = bc.classification.matching_scheme.last_clock
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
@@ -77,7 +77,7 @@ end
 
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
-    tⁿ = bc.classifcation.matching_scheme.last_clock
+    tⁿ = bc.classification.matching_scheme.last_clock
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
@@ -100,7 +100,7 @@ end
 @inline function _fill_south_open_halo!(i, k, grid, v, bc::PCOBC, loc, clock, model_fields)
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
-    tⁿ = bc.classifcation.matching_scheme.last_clock
+    tⁿ = bc.classification.matching_scheme.last_clock
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
