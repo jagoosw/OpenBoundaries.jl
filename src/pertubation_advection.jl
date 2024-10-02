@@ -13,7 +13,7 @@ struct PertubationAdvection{FT, C}
 end
 
 function PertubationAdvectionOpenBoundaryCondition(val, FT = Float64; 
-                                                   outflow_relaxation_timescale = 0.0, 
+                                                   outflow_relaxation_timescale = Inf, 
                                                    inflow_relaxation_timescale = 10.0, kwargs...)
     last_clock = Clock(; time = zero(FT))
 
