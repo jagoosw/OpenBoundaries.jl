@@ -19,9 +19,9 @@ function PertubationAdvectionOpenBoundaryCondition(val, FT = Float64; relaxation
     return BoundaryCondition(classification, val; kwargs...)
 end
 
-const PCOBC = BoundaryCondition{<:Open{<:PertubationAdvection}}
+const PAOBC = BoundaryCondition{<:Open{<:PertubationAdvection}}
 
-@inline function update_boundary_condition!(bc::PCOBC, side, field, model)
+@inline function update_boundary_condition!(bc::PAOBC, side, field, model)
     t = model.clock.time
     Δt = model.clock.last_stage_Δt
 
@@ -32,7 +32,7 @@ const PCOBC = BoundaryCondition{<:Open{<:PertubationAdvection}}
     return nothing
 end
 
-@inline function _fill_east_open_halo!(j, k, grid, u, bc::PCOBC, loc, clock, model_fields)
+@inline function _fill_east_open_halo!(j, k, grid, u, bc::PAOBC, loc, clock, model_fields)
     i = grid.Nx + 1
 
     τ = bc.classification.matching_scheme.relaxation_timescale
@@ -57,7 +57,7 @@ end
     @inbounds u[i, j, k] = ūⁿ⁺¹ + u′ᵢⁿ⁺¹
 end
 
-@inline function _fill_west_open_halo!(j, k, grid, u, bc::PCOBC, loc, clock, model_fields)
+@inline function _fill_west_open_halo!(j, k, grid, u, bc::PAOBC, loc, clock, model_fields)
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
     tⁿ = bc.classification.matching_scheme.last_clock
@@ -84,7 +84,7 @@ end
     @inbounds u[0, j, k] = ūⁿ⁺¹ + u′₀ⁿ⁺¹
 end
 
-@inline function _fill_north_open_halo!(i, k, grid, v, bc::PCOBC, loc, clock, model_fields)
+@inline function _fill_north_open_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
     j = grid.Ny + 1
 
     τ = bc.classification.matching_scheme.relaxation_timescale
@@ -109,7 +109,7 @@ end
     @inbounds v[i, j, k] = v̄ⁿ⁺¹ + v′ⱼⁿ⁺¹
 end
 
-@inline function _fill_south_open_halo!(i, k, grid, v, bc::PCOBC, loc, clock, model_fields)
+@inline function _fill_south_open_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
     τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
     tⁿ = bc.classification.matching_scheme.last_clock
