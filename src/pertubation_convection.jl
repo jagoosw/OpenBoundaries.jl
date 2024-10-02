@@ -64,19 +64,20 @@ end
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
-    Δx = xspacing(0, j, k, grid, Face(), Center(), Center())
+    Δx = xspacing(1, j, k, grid, Face(), Center(), Center())
 
     ūⁿ⁺¹ = getbc(bc, j, k, grid, clock, model_fields)
 
     ūⁿ   = getbc(bc, j, k, grid, tⁿ, model_fields)
 
     u′₀ⁿ   = @inbounds u[0, j, k] - ūⁿ
-    u′₁ⁿ⁺¹ = @inbounds u[1, j, k] - ūⁿ⁺¹
+    u′₁ⁿ⁺¹ = @inbounds u[2, j, k] - ūⁿ⁺¹
 
     U = min(0, max(1, Δt / Δx * ūⁿ⁺¹))
 
-    u′₀ⁿ⁺¹ = (u′₀ⁿ - U * u′₁ⁿ⁺¹) / (1 + Δt / τ - U)
+    u′₀ⁿ⁺¹ = @show (u′₀ⁿ - U * u′₁ⁿ⁺¹) / (1 + Δt / τ - U)
 
+    @inbounds u[1, j, k] = ūⁿ⁺¹ + u′₀ⁿ⁺¹
     @inbounds u[0, j, k] = ūⁿ⁺¹ + u′₀ⁿ⁺¹
 end
 
@@ -112,18 +113,19 @@ end
 
     Δt = ifelse(isinf(Δt), 0, Δt)
 
-    Δx = xspacing(i, 0, k, grid, Center(), Face(), Center())
+    Δx = xspacing(i, 1, k, grid, Center(), Face(), Center())
 
     v̄ⁿ⁺¹ = getbc(bc, i, k, grid, clock, model_fields)
 
     v̄ⁿ   = getbc(bc, i, k, grid, tⁿ, model_fields)
 
     v′₀ⁿ   = @inbounds v[i, 0, k] - v̄ⁿ
-    v′₁ⁿ⁺¹ = @inbounds v[i, 1, k] - v̄ⁿ⁺¹
+    v′₁ⁿ⁺¹ = @inbounds v[i, 2, k] - v̄ⁿ⁺¹
 
     V = min(0, max(1, Δt / Δx * v̄ⁿ⁺¹))
 
     v′₀ⁿ⁺¹ = (v′₀ⁿ - V * v′₁ⁿ⁺¹) / (1 + Δt / τ - V)
 
+    @inbounds v[i, 1, k] = v̄ⁿ⁺¹ + v′₀ⁿ⁺¹
     @inbounds v[i, 0, k] = v̄ⁿ⁺¹ + v′₀ⁿ⁺¹
 end
