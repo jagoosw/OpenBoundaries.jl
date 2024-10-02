@@ -138,7 +138,7 @@ end
 
     V = min(0, max(1, Δt / Δx * v̄ⁿ⁺¹))
 
-    τ = ifelse(v′ⱼ₋₁ⁿ⁺¹ + v̄ⁿ⁺¹ < 0, 
+    τ = ifelse(v′₁ⁿ⁺¹ + v̄ⁿ⁺¹ < 0, 
                bc.classification.matching_scheme.outflow_relaxation_timescale, 
                bc.classification.matching_scheme.inflow_relaxation_timescale)
 
