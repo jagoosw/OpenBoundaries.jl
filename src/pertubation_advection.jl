@@ -96,7 +96,6 @@ end
 @inline function _fill_north_open_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
     j = grid.Ny + 1
 
-    τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
     tⁿ = bc.classification.matching_scheme.last_clock
 
@@ -123,7 +122,6 @@ end
 end
 
 @inline function _fill_south_open_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
-    τ = bc.classification.matching_scheme.relaxation_timescale
     Δt = clock.last_stage_Δt
     tⁿ = bc.classification.matching_scheme.last_clock
 
