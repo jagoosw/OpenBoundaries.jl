@@ -92,9 +92,9 @@ end
 
     Δx = xspacing(i, j, k, grid, Center(), Face(), Center())
 
-    v̄ⁿ⁺¹ = getbc(bc, j, k, grid, clock, model_fields)
+    v̄ⁿ⁺¹ = getbc(bc, i, k, grid, clock, model_fields)
 
-    v̄ⁿ   = getbc(bc, j, k, grid, tⁿ, model_fields)
+    v̄ⁿ   = getbc(bc, i, k, grid, tⁿ, model_fields)
 
     v′ⱼⁿ     = @inbounds v[i, j, k] - v̄ⁿ
     v′ⱼ₋₁ⁿ⁺¹ = @inbounds v[i, j - 1, k] - v̄ⁿ⁺¹
