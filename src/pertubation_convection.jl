@@ -6,20 +6,20 @@ using Oceananigans.TimeSteppers: Clock
 
 Assumed that the condition is the mean flow.
 """
-struct PertubationConvection{FT, C}
+struct PertubationAdvection{FT, C}
     relaxation_timescale :: FT
               last_clock :: C
 end
 
-function PertubationConvectionOpenBoundaryCondition(val, FT = Float64; relaxation_timescale = 10, kwargs...)
+function PertubationAdvectionOpenBoundaryCondition(val, FT = Float64; relaxation_timescale = 10, kwargs...)
     last_clock = Clock(; time = zero(FT))
 
-    classification = Open(PertubationConvection(relaxation_timescale, last_clock))
+    classification = Open(PertubationAdvection(relaxation_timescale, last_clock))
     
     return BoundaryCondition(classification, val; kwargs...)
 end
 
-const PCOBC = BoundaryCondition{<:Open{<:PertubationConvection}}
+const PCOBC = BoundaryCondition{<:Open{<:PertubationAdvection}}
 
 @inline function update_boundary_condition!(bc::PCOBC, side, field, model)
     t = model.clock.time
@@ -77,6 +77,9 @@ end
 
     u′₀ⁿ⁺¹ = @show (u′₀ⁿ - U * u′₁ⁿ⁺¹) / (1 + Δt / τ - U)
 
+    # this is a temporaty hack because the 1, j, k point is getting stepped during 
+    # the timestepping (based on erronious gradients) so we can't just integrate
+    # it here
     @inbounds u[1, j, k] = ūⁿ⁺¹ + u′₀ⁿ⁺¹
     @inbounds u[0, j, k] = ūⁿ⁺¹ + u′₀ⁿ⁺¹
 end
@@ -126,6 +129,7 @@ end
 
     v′₀ⁿ⁺¹ = (v′₀ⁿ - V * v′₁ⁿ⁺¹) / (1 + Δt / τ - V)
 
+    # see note above
     @inbounds v[i, 1, k] = v̄ⁿ⁺¹ + v′₀ⁿ⁺¹
     @inbounds v[i, 0, k] = v̄ⁿ⁺¹ + v′₀ⁿ⁺¹
 end
