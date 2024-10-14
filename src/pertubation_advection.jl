@@ -18,6 +18,8 @@ function PertubationAdvectionOpenBoundaryCondition(val, FT = Float64;
     last_clock = Clock(; time = zero(FT))
 
     classification = Open(PertubationAdvection(outflow_relaxation_timescale, inflow_relaxation_timescale, last_clock))
+
+    @warn "This open boundaries matching scheme is experimental and un-tested/validated"
     
     return BoundaryCondition(classification, val; kwargs...)
 end
