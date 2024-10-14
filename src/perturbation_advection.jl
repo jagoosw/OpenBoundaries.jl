@@ -6,25 +6,25 @@ using Oceananigans.TimeSteppers: Clock
 
 Assumed that the condition is the mean flow.
 """
-struct PertubationAdvection{FT, C}
+struct PerturbationAdvection{FT, C}
  outflow_relaxation_timescale :: FT
   inflow_relaxation_timescale :: FT
                    last_clock :: C
 end
 
-function PertubationAdvectionOpenBoundaryCondition(val, FT = Float64; 
+function PerturbationAdvectionOpenBoundaryCondition(val, FT = Float64; 
                                                    outflow_relaxation_timescale = Inf, 
                                                    inflow_relaxation_timescale = 10.0, kwargs...)
     last_clock = Clock(; time = zero(FT))
 
-    classification = Open(PertubationAdvection(outflow_relaxation_timescale, inflow_relaxation_timescale, last_clock))
+    classification = Open(PerturbationAdvection(outflow_relaxation_timescale, inflow_relaxation_timescale, last_clock))
 
     @warn "This open boundaries matching scheme is experimental and un-tested/validated"
     
     return BoundaryCondition(classification, val; kwargs...)
 end
 
-const PAOBC = BoundaryCondition{<:Open{<:PertubationAdvection}}
+const PAOBC = BoundaryCondition{<:Open{<:PerturbationAdvection}}
 
 @inline function update_boundary_condition!(bc::PAOBC, side, field, model)
     t = model.clock.time

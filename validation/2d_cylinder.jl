@@ -2,7 +2,7 @@ using Oceananigans, OpenBoundaries, CairoMakie
 
 using Oceananigans.BoundaryConditions: Open
 
-using OpenBoundaries: PertubationAdvectionOpenBoundaryCondition
+using OpenBoundaries: PerturbationAdvectionOpenBoundaryCondition
 
 Re = 900
 
@@ -21,8 +21,8 @@ Nx = floor(Int, Lx / Ly * Ny)
 
 grid = RectilinearGrid(topology = (Periodic, Bounded, Flat), size = (Nx, Ny), extent = (Lx, Ly))
 
-v_south_boundary  = PertubationAdvectionOpenBoundaryCondition(u; relaxation_timescale = 0.1)#MeanOutflowOpenBoundaryCondition(grid, :west, u; inflow_relaxation_timescale = 10.0, outflow_relaxation_timescale = Inf)
-v_north_boundary  = PertubationAdvectionOpenBoundaryCondition(u; relaxation_timescale = 0.1)#MeanOutflowOpenBoundaryCondition(grid, :east, u; inflow_relaxation_timescale = 10.0, outflow_relaxation_timescale = Inf)
+v_south_boundary  = PerturbationAdvectionOpenBoundaryCondition(u; relaxation_timescale = 0.1)#MeanOutflowOpenBoundaryCondition(grid, :west, u; inflow_relaxation_timescale = 10.0, outflow_relaxation_timescale = Inf)
+v_north_boundary  = PerturbationAdvectionOpenBoundaryCondition(u; relaxation_timescale = 0.1)#MeanOutflowOpenBoundaryCondition(grid, :east, u; inflow_relaxation_timescale = 10.0, outflow_relaxation_timescale = Inf)
 
 u_south_boundary  = GradientBoundaryCondition(0)
 u_north_boundary  = GradientBoundaryCondition(0)

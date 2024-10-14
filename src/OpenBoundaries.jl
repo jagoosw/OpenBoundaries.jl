@@ -22,6 +22,6 @@ import Oceananigans.BoundaryConditions: _fill_west_open_halo!,
 
 #include("mean_outflow.jl")
 #include("fixed_phase_speed.jl")
-include("pertubation_advection.jl")
+include("perturbation_advection.jl")
 
 end # module
