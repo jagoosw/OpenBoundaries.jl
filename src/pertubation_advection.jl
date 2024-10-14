@@ -84,7 +84,7 @@ end
                bc.classification.matching_scheme.outflow_relaxation_timescale, 
                bc.classification.matching_scheme.inflow_relaxation_timescale)
 
-    u′₀ⁿ⁺¹ = @show (u′₀ⁿ - U * u′₁ⁿ⁺¹) / (1 + Δt / τ - U)
+    u′₀ⁿ⁺¹ = (u′₀ⁿ - U * u′₁ⁿ⁺¹) / (1 + Δt / τ - U)
 
     # this is a temporaty hack because the 1, j, k point is getting stepped during 
     # the timestepping (based on erronious gradients) so we can't just integrate
