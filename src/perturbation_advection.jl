@@ -38,7 +38,7 @@ const PAOBC = BoundaryCondition{<:Open{<:PerturbationAdvection}}
     return nothing
 end
 
-@inline function _fill_east_open_halo!(j, k, grid, u, bc::PAOBC, loc, clock, model_fields)
+@inline function _fill_east_halo!(j, k, grid, u, bc::PAOBC, loc, clock, model_fields)
     i = grid.Nx + 1
 
     Δt = clock.last_stage_Δt
@@ -66,7 +66,7 @@ end
     @inbounds u[i, j, k] = ifelse(active_cell(i, j, k, grid), ūⁿ⁺¹ + u′ᵢⁿ⁺¹, zero(grid))
 end
 
-@inline function _fill_west_open_halo!(j, k, grid, u, bc::PAOBC, loc, clock, model_fields)
+@inline function _fill_west_halo!(j, k, grid, u, bc::PAOBC, loc, clock, model_fields)
     Δt = clock.last_stage_Δt
     tⁿ = bc.classification.matching_scheme.last_clock
 
@@ -96,7 +96,7 @@ end
     @inbounds u[0, j, k] = ifelse(active_cell(1, j, k, grid), ūⁿ⁺¹ + u′₀ⁿ⁺¹, zero(grid))
 end
 
-@inline function _fill_north_open_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
+@inline function _fill_north_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
     j = grid.Ny + 1
 
     Δt = clock.last_stage_Δt
@@ -124,7 +124,7 @@ end
     @inbounds v[i, j, k] = ifelse(active_cell(i, j, k, grid), v̄ⁿ⁺¹ + v′ⱼⁿ⁺¹, convert(eltype(grid), 0))
 end
 
-@inline function _fill_south_open_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
+@inline function _fill_south_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
     Δt = clock.last_stage_Δt
     tⁿ = bc.classification.matching_scheme.last_clock
 
