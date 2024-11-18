@@ -12,7 +12,7 @@ Oceananigans = "9e8cae18-63c1-5223-a75c-80ca9d6e9a09"
 Adapt = "4"
 CairoMakie = "0.12"
 KernelAbstractions = "0.9"
-Oceananigans = "0.91.8"
+Oceananigans = "0.91.8, 0.92, 0.93, 0.94"
 
 [extras]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
