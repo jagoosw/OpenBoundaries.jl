@@ -1,4 +1,5 @@
 using Oceananigans.Grids: xspacing
+using Oceananigans.ImmersedBoundaries: active_cell
 using Oceananigans.TimeSteppers: Clock
 
 """
@@ -13,13 +14,13 @@ struct PerturbationAdvection{FT, C}
 end
 
 function PerturbationAdvectionOpenBoundaryCondition(val, FT = Float64; 
-                                                   outflow_relaxation_timescale = Inf, 
-                                                   inflow_relaxation_timescale = 10.0, kwargs...)
+                                                    outflow_relaxation_timescale = Inf, 
+                                                    inflow_relaxation_timescale = 10.0, kwargs...)
     last_clock = Clock(; time = zero(FT))
 
     classification = Open(PerturbationAdvection(outflow_relaxation_timescale, inflow_relaxation_timescale, last_clock))
 
-    @warn "This open boundaries matching scheme is experimental and un-tested/validated"
+    @warn "`PerturbationAdvection` open boundaries matching scheme is experimental and un-tested/validated"
     
     return BoundaryCondition(classification, val; kwargs...)
 end
@@ -62,7 +63,7 @@ end
 
     u′ᵢⁿ⁺¹ = (u′ᵢⁿ + U * u′ᵢ₋₁ⁿ⁺¹) / (1 + Δt / τ + U)
 
-    @inbounds u[i, j, k] = ūⁿ⁺¹ + u′ᵢⁿ⁺¹
+    @inbounds u[i, j, k] = ifelse(active_cell(i, j, k, grid), ūⁿ⁺¹ + u′ᵢⁿ⁺¹, convert(eltype(grid), 0))
 end
 
 @inline function _fill_west_open_halo!(j, k, grid, u, bc::PAOBC, loc, clock, model_fields)
@@ -82,7 +83,7 @@ end
 
     U = min(0, max(1, Δt / Δx * ūⁿ⁺¹))
 
-    τ = ifelse(u′ᵢ₋₁ⁿ⁺¹ + ūⁿ⁺¹ < 0, 
+    τ = ifelse(u′₁ⁿ⁺¹ + ūⁿ⁺¹ < 0, 
                bc.classification.matching_scheme.outflow_relaxation_timescale, 
                bc.classification.matching_scheme.inflow_relaxation_timescale)
 
@@ -91,8 +92,8 @@ end
     # this is a temporaty hack because the 1, j, k point is getting stepped during 
     # the timestepping (based on erronious gradients) so we can't just integrate
     # it here
-    @inbounds u[1, j, k] = ūⁿ⁺¹ + u′₀ⁿ⁺¹
-    @inbounds u[0, j, k] = ūⁿ⁺¹ + u′₀ⁿ⁺¹
+    @inbounds u[1, j, k] = ifelse(active_cell(1, j, k, grid), ūⁿ⁺¹ + u′₀ⁿ⁺¹, )
+    @inbounds u[0, j, k] = ifelse(active_cell(1, j, k, grid), ūⁿ⁺¹ + u′₀ⁿ⁺¹, convert(eltype(grid), 0))
 end
 
 @inline function _fill_north_open_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
@@ -120,7 +121,7 @@ end
     
     v′ⱼⁿ⁺¹ = (v′ⱼⁿ + V * v′ⱼ₋₁ⁿ⁺¹) / (1 + Δt / τ + V)
 
-    @inbounds v[i, j, k] = v̄ⁿ⁺¹ + v′ⱼⁿ⁺¹
+    @inbounds v[i, j, k] = ifelse(active_cell(i, j, k, grid), v̄ⁿ⁺¹ + v′ⱼⁿ⁺¹, convert(eltype(grid), 0))
 end
 
 @inline function _fill_south_open_halo!(i, k, grid, v, bc::PAOBC, loc, clock, model_fields)
@@ -147,6 +148,6 @@ end
     v′₀ⁿ⁺¹ = (v′₀ⁿ - V * v′₁ⁿ⁺¹) / (1 + Δt / τ - V)
 
     # see note above
-    @inbounds v[i, 1, k] = v̄ⁿ⁺¹ + v′₀ⁿ⁺¹
-    @inbounds v[i, 0, k] = v̄ⁿ⁺¹ + v′₀ⁿ⁺¹
+    @inbounds v[i, 1, k] = ifelse(active_cell(i, 1, k, grid), v̄ⁿ⁺¹ + v′₀ⁿ⁺¹, convert(eltype(grid), 0))
+    @inbounds v[i, 0, k] = ifelse(active_cell(i, 1, k, grid), v̄ⁿ⁺¹ + v′₀ⁿ⁺¹, convert(eltype(grid), 0))
 end
