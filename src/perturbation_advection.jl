@@ -1,6 +1,10 @@
+using Adapt
+
 using Oceananigans.Grids: xspacing
 using Oceananigans.ImmersedBoundaries: active_cell
 using Oceananigans.TimeSteppers: Clock
+
+import Adapt: adapt_structure
 
 """
     PretubationConvection
@@ -12,6 +16,11 @@ struct PerturbationAdvection{FT, C}
   inflow_relaxation_timescale :: FT
                    last_clock :: C
 end
+
+Adapt.adapt_structure(to, pe::PerturbationAdvection) = 
+    PerturbationAdvection(adapt(to, pe.outflow_relaxation_timescale),
+                          adapt(to, pe.inflow_relaxation_timescale),
+                          adapt(to, pe.last_clock))
 
 function PerturbationAdvectionOpenBoundaryCondition(val, FT = Float64; 
                                                     outflow_relaxation_timescale = Inf, 
